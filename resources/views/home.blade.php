@@ -15,7 +15,7 @@
         </p>
 
         <div class="btn-group">
-            <a href="{{ route('projects') }}" class="btn btn-primary">Lihat Proyek</a>
+            <a href="{{ route('projects.index') }}" class="btn btn-primary">Lihat Proyek</a>
             <a href="{{ route('about') }}" class="btn btn-secondary">Tentang Saya</a>
         </div>
     </section>

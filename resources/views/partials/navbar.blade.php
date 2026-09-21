@@ -6,7 +6,7 @@
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
             <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
             <a href="{{ route('education') }}" class="nav-link {{ request()->routeIs('education') ? 'active' : '' }}">Education</a>
-            <a href="{{ route('projects') }}" class="nav-link {{ request()->routeIs('projects') ? 'active' : '' }}">Projects</a>
+            <a href="{{ route('projects.index') }}" class="nav-link {{ request()->routeIs('projects') ? 'active' : '' }}">Projects</a>
         </nav>
     </div>
 </header>
