@@ -1,22 +1,37 @@
 @extends('layouts.app')
 
+@section('title', 'Projects')
+
 @section('content')
-    <div class="container">
-        <h1>Projects</h1>
 
-        @forelse ($projects as $project)
-            <div>
-                <h2>{{ $project->title }}</h2>
-                <p>{{ $project->description }}</p>
-
-                <a href="{{ route('projects.show', $project) }}">
-                    Lihat Detail
-                </a>
-            </div>
-
-            <hr>
-        @empty
-            <p>Belum ada project.</p>
-        @endforelse
+    <div class="page-header page-header-action">
+        <div>
+            <h1 class="page-title">Projects</h1>
+            <p class="page-subtitle">Beberapa proyek yang pernah saya buat untuk tugas perkuliahan.</p>
+        </div>
+        <a href="{{ route('projects.create') }}" class="btn btn-primary">Tambah Project</a>
     </div>
+
+    @if ($projects->isEmpty())
+        <div class="card empty-state">
+            <p class="card-text">Belum ada project.</p>
+        </div>
+    @else
+        <div class="card-grid">
+            @foreach ($projects as $project)
+                <div class="project-item">
+                    <div>
+                        <h2 class="project-item-title">{{ $project->title }}</h2>
+                        <p class="project-item-desc">{{ $project->description }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary">
+                            Lihat Detail
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
+
 @endsection

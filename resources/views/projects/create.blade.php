@@ -1,42 +1,51 @@
 @extends('layouts.app')
 
-@section('content')
-    <div class="container">
-        <h1>Tambah Project</h1>
+@section('title', 'Tambah Project')
 
+@section('content')
+
+    <div class="page-header">
+        <h1 class="page-title">Tambah Project</h1>
+        <p class="page-subtitle">Tambahkan data project baru ke dalam portfolio perkuliahan.</p>
+    </div>
+
+    <div class="form-card">
         <form action="{{ route('projects.store') }}" method="POST">
             @csrf
 
-            <div style="margin-bottom: 15px;">
-                <label for="title">Judul Project</label>
-                <br>
+            <div class="form-group">
+                <label for="title" class="form-label">Judul Project</label>
                 <input
                     type="text"
                     id="title"
                     name="title"
+                    class="form-control"
+                    placeholder="Contoh: Website Portfolio Laravel"
                     required
-                    style="width: 100%; padding: 10px; margin-top: 5px;"
                 >
             </div>
 
-            <div style="margin-bottom: 15px;">
-                <label for="description">Deskripsi Project</label>
-                <br>
+            <div class="form-group">
+                <label for="description" class="form-label">Deskripsi Project</label>
                 <textarea
                     id="description"
                     name="description"
-                    required
+                    class="form-control"
                     rows="6"
-                    style="width: 100%; padding: 10px; margin-top: 5px;"
+                    placeholder="Tuliskan deskripsi ringkas tentang project, teknologi yang digunakan, atau tujuan pembuatan..."
+                    required
                 ></textarea>
             </div>
 
-            <button
-                type="submit"
-                style="padding: 10px 20px; cursor: pointer;"
-            >
-                Simpan Project
-            </button>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    Simpan Project
+                </button>
+                <a href="{{ route('projects.index') }}" class="btn btn-secondary">
+                    Kembali ke Projects
+                </a>
+            </div>
         </form>
     </div>
+
 @endsection
