@@ -12,6 +12,12 @@
         <a href="{{ route('projects.create') }}" class="btn btn-primary">Tambah Project</a>
     </div>
 
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
     @if ($projects->isEmpty())
         <div class="card empty-state">
             <p class="card-text">Belum ada project.</p>

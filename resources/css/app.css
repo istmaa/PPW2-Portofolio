@@ -513,3 +513,21 @@ textarea.form-control {
         padding: 1.15rem;
     }
 }
+
+/* ==========================================================================
+   Flash Message
+   ========================================================================== */
+
+.alert {
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    border: 1px solid;
+}
+
+.alert-success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border-color: #bbf7d0;
+}

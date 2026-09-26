@@ -1,17 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Project')
+@section('title', 'Edit Project')
 
 @section('content')
 
     <div class="page-header">
-        <h1 class="page-title">Tambah Project</h1>
-        <p class="page-subtitle">Tambahkan data project baru ke dalam portfolio perkuliahan.</p>
+        <h1 class="page-title">Edit Project</h1>
+        <p class="page-subtitle">Perbarui data project pada portfolio perkuliahan.</p>
     </div>
 
     <div class="form-card">
-        <form action="{{ route('projects.store') }}" method="POST">
+        <form action="{{ route('projects.update', $project) }}" method="POST">
             @csrf
+            @method('PUT')
 
             <div class="form-group">
                 <label for="title" class="form-label">Judul Project</label>
@@ -20,8 +21,7 @@
                     id="title"
                     name="title"
                     class="form-control"
-                    placeholder="Contoh: Website Portfolio Laravel"
-                    value="{{ old('title') }}"
+                    value="{{ old('title', $project->title) }}"
                     required
                 >
 
@@ -37,9 +37,8 @@
                     name="description"
                     class="form-control"
                     rows="6"
-                    placeholder="Tuliskan deskripsi ringkas tentang project, teknologi yang digunakan, atau tujuan pembuatan..."
                     required
-                >{{ old('description') }}</textarea>
+                >{{ old('description', $project->description) }}</textarea>
 
                 @error('description')
                     <small class="text-danger">{{ $message }}</small>
@@ -48,10 +47,11 @@
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">
-                    Simpan Project
+                    Simpan Perubahan
                 </button>
-                <a href="{{ route('projects.index') }}" class="btn btn-secondary">
-                    Kembali ke Projects
+
+                <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary">
+                    Batal
                 </a>
             </div>
         </form>

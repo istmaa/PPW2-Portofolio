@@ -29,14 +29,20 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'title' => 'required|string|min:5',
+            'description' => 'required|string|min:10',
+        ]);
+
         $project = new Project();
 
-        $project->title = $request->title;
-        $project->description = $request->description;
+        $project->title = $validated['title'];
+        $project->description = $validated['description'];
 
         $project->save();
 
-        return redirect()->route('projects.index');
+        return redirect()->route('projects.index')
+            ->with('success', 'Project berhasil ditambahkan.');
     }
 
     /**
@@ -50,24 +56,35 @@ class ProjectController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Project $project)
     {
-        //
+        return view('projects.edit', compact('project'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Project $project)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|min:5',
+            'description' => 'required|string|min:10',
+        ]);
+
+        $project->update($validated);
+
+        return redirect()->route('projects.show', $project)
+            ->with('success', 'Project berhasil diperbarui.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Project $project)
     {
-        //
+        $project->delete();
+
+        return redirect()->route('projects.index')
+            ->with('success', 'Project berhasil dihapus.');
     }
 }
