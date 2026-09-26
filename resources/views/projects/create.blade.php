@@ -19,11 +19,12 @@
                     type="text"
                     id="title"
                     name="title"
-                    class="form-control"
+                    class="form-control @error('title') is-invalid @enderror"
                     placeholder="Contoh: Website Portfolio Laravel"
                     value="{{ old('title') }}"
                     required
                 >
+                <small class="form-hint">Minimal 5 karakter</small>
 
                 @error('title')
                     <small class="text-danger">{{ $message }}</small>
@@ -35,11 +36,12 @@
                 <textarea
                     id="description"
                     name="description"
-                    class="form-control"
+                    class="form-control @error('description') is-invalid @enderror"
                     rows="6"
                     placeholder="Tuliskan deskripsi ringkas tentang project, teknologi yang digunakan, atau tujuan pembuatan..."
                     required
                 >{{ old('description') }}</textarea>
+                <small class="form-hint">Minimal 10 karakter</small>
 
                 @error('description')
                     <small class="text-danger">{{ $message }}</small>

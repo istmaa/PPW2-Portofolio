@@ -20,10 +20,11 @@
                     type="text"
                     id="title"
                     name="title"
-                    class="form-control"
+                    class="form-control @error('title') is-invalid @enderror"
                     value="{{ old('title', $project->title) }}"
                     required
                 >
+                <small class="form-hint">Minimal 5 karakter</small>
 
                 @error('title')
                     <small class="text-danger">{{ $message }}</small>
@@ -35,10 +36,11 @@
                 <textarea
                     id="description"
                     name="description"
-                    class="form-control"
+                    class="form-control @error('description') is-invalid @enderror"
                     rows="6"
                     required
                 >{{ old('description', $project->description) }}</textarea>
+                <small class="form-hint">Minimal 10 karakter</small>
 
                 @error('description')
                     <small class="text-danger">{{ $message }}</small>
