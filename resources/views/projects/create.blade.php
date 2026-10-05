@@ -48,6 +48,23 @@
                 @enderror
             </div>
 
+            <div class="form-group">
+                <label for="status" class="form-label">Status</label>
+                <select
+                    id="status"
+                    name="status"
+                    class="form-control @error('status') is-invalid @enderror"
+                    required
+                >
+                    <option value="draft" {{ old('status', 'draft') === 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="published" {{ old('status') === 'published' ? 'selected' : '' }}>Published</option>
+                </select>
+
+                @error('status')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">
                     Simpan Project

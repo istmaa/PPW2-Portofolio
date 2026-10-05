@@ -12,7 +12,9 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::published()
+            ->latest()
+            ->get();
 
         return view('projects.index', compact('projects'));
     }
@@ -32,12 +34,14 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|min:5',
             'description' => 'required|string|min:10',
+            'status' => 'required|in:draft,published',
         ]);
 
         $project = new Project();
 
         $project->title = $validated['title'];
         $project->description = $validated['description'];
+        $project->status = $validated['status'];
 
         $project->save();
 
@@ -69,6 +73,7 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|min:5',
             'description' => 'required|string|min:10',
+            'status' => 'required|in:draft,published',
         ]);
 
         $project->update($validated);
@@ -86,5 +91,36 @@ class ProjectController extends Controller
 
         return redirect()->route('projects.index')
             ->with('success', 'Project berhasil dihapus.');
+    }
+
+    public function trash()
+    {
+        $projects = Project::onlyTrashed()
+            ->latest()
+            ->get();
+
+        return view('projects.trash', compact('projects'));
+    }
+
+    public function restore($id)
+    {
+        $project = Project::withTrashed()->findOrFail($id);
+
+        $project->restore();
+
+        return redirect()
+            ->route('projects.trash')
+            ->with('success', 'Project berhasil dikembalikan.');
+    }
+
+    public function forceDelete($id)
+    {
+        $project = Project::withTrashed()->findOrFail($id);
+
+        $project->forceDelete();
+
+        return redirect()
+            ->route('projects.trash')
+            ->with('success', 'Project berhasil dihapus permanen.');
     }
 }

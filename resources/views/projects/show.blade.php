@@ -19,7 +19,10 @@
     @endif
 
     <div class="card">
-        <h2 class="card-title">Deskripsi Project</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h2 class="card-title" style="margin: 0;">Deskripsi Project</h2>
+            <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
+        </div>
         <p class="card-text" style="white-space: pre-line;">{{ $project->description }}</p>
     </div>
 

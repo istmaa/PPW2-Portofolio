@@ -9,7 +9,10 @@
             <h1 class="page-title">Projects</h1>
             <p class="page-subtitle">Beberapa proyek yang pernah saya buat untuk tugas perkuliahan.</p>
         </div>
-        <a href="{{ route('projects.create') }}" class="btn btn-primary">Tambah Project</a>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <a href="{{ route('projects.trash') }}" class="btn btn-secondary">Trash</a>
+            <a href="{{ route('projects.create') }}" class="btn btn-primary">Tambah Project</a>
+        </div>
     </div>
 
     @if (session('success'))
