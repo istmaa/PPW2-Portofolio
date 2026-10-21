@@ -24,25 +24,75 @@
         </div>
     @endif
 
+    <div class="projects-toolbar">
+        <form action="{{ route('projects.index') }}" method="GET" class="projects-filter-form">
+            <div class="filter-search-group">
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ $search }}"
+                    placeholder="Cari judul project..."
+                    class="form-control"
+                >
+            </div>
+
+            <div class="filter-select-group">
+                <label for="per_page" class="filter-label">Tampilkan:</label>
+                <select name="per_page" id="per_page" class="form-control filter-select" onchange="this.form.submit()">
+                    <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
+                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Cari</button>
+                @if ($search || $perPage != 10)
+                    <a href="{{ route('projects.index') }}" class="btn btn-secondary">Reset</a>
+                @endif
+            </div>
+        </form>
+    </div>
+
     @if ($projects->isEmpty())
         <div class="card empty-state">
-            <p class="card-text">Belum ada project.</p>
+            @if ($search)
+                <p class="card-text">Tidak ada project yang sesuai dengan kata kunci "<strong>{{ $search }}</strong>".</p>
+                <div style="margin-top: 1rem;">
+                    <a href="{{ route('projects.index') }}" class="btn btn-secondary">Reset Pencarian</a>
+                </div>
+            @else
+                <p class="card-text">Belum ada project.</p>
+            @endif
         </div>
     @else
         <div class="card-grid">
             @foreach ($projects as $project)
                 <div class="project-item">
-                    <div>
+                    <div class="project-item-content">
+                        <div class="project-item-header">
+                            <span class="tag">#{{ $projects->firstItem() + $loop->index }}</span>
+                            <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
+                        </div>
                         <h2 class="project-item-title">{{ $project->title }}</h2>
                         <p class="project-item-desc">{{ $project->description }}</p>
                     </div>
-                    <div>
+                    <div class="project-item-footer">
                         <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary">
                             Lihat Detail
                         </a>
                     </div>
                 </div>
             @endforeach
+        </div>
+
+        <div class="pagination-wrapper">
+            <div class="pagination-summary">
+                <span>
+                    Menampilkan <strong>{{ $projects->firstItem() }}</strong> &ndash; <strong>{{ $projects->lastItem() }}</strong> dari <strong>{{ $projects->total() }}</strong> project
+                </span>
+            </div>
+            {{ $projects->links() }}
         </div>
     @endif
 

@@ -184,4 +184,82 @@ class ProjectTest extends TestCase
         $this->get(route('about'))->assertStatus(200);
         $this->get(route('education'))->assertStatus(200);
     }
+
+    public function test_project_sample_seeder_creates_twenty_five_records(): void
+    {
+        $this->seed(\Database\Seeders\ProjectSampleSeeder::class);
+
+        $this->assertSame(25, Project::count());
+        $this->assertSame(25, Project::published()->count());
+        $this->assertSame(25, Project::distinct('title')->count('title'));
+    }
+
+    public function test_database_seeder_calls_project_sample_seeder(): void
+    {
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        $this->assertSame(25, Project::count());
+    }
+
+    public function test_pagination_defaults_to_ten_items_per_page(): void
+    {
+        $this->seed(\Database\Seeders\ProjectSampleSeeder::class);
+
+        $response = $this->get(route('projects.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Menampilkan <strong>1</strong> &ndash; <strong>10</strong> dari <strong>25</strong> project', false);
+        $response->assertSee('#1');
+        $response->assertSee('#10');
+        $response->assertDontSee('#11');
+    }
+
+    public function test_pagination_respects_per_page_options(): void
+    {
+        $this->seed(\Database\Seeders\ProjectSampleSeeder::class);
+
+        $responseFive = $this->get(route('projects.index', ['per_page' => 5]));
+        $responseFive->assertStatus(200);
+        $responseFive->assertSee('Menampilkan <strong>1</strong> &ndash; <strong>5</strong> dari <strong>25</strong> project', false);
+
+        $responseTwentyFive = $this->get(route('projects.index', ['per_page' => 25]));
+        $responseTwentyFive->assertStatus(200);
+        $responseTwentyFive->assertSee('Menampilkan <strong>1</strong> &ndash; <strong>25</strong> dari <strong>25</strong> project', false);
+
+        $responseInvalid = $this->get(route('projects.index', ['per_page' => 999]));
+        $responseInvalid->assertStatus(200);
+        $responseInvalid->assertSee('Menampilkan <strong>1</strong> &ndash; <strong>10</strong> dari <strong>25</strong> project', false);
+    }
+
+    public function test_running_number_continues_across_pages(): void
+    {
+        $this->seed(\Database\Seeders\ProjectSampleSeeder::class);
+
+        $pageTwo = $this->get(route('projects.index', ['page' => 2, 'per_page' => 10]));
+        $pageTwo->assertStatus(200);
+        $pageTwo->assertSee('Menampilkan <strong>11</strong> &ndash; <strong>20</strong> dari <strong>25</strong> project', false);
+        $pageTwo->assertSee('#11');
+        $pageTwo->assertSee('#20');
+
+        $pageThree = $this->get(route('projects.index', ['page' => 3, 'per_page' => 10]));
+        $pageThree->assertStatus(200);
+        $pageThree->assertSee('Menampilkan <strong>21</strong> &ndash; <strong>25</strong> dari <strong>25</strong> project', false);
+        $pageThree->assertSee('#21');
+        $pageThree->assertSee('#25');
+    }
+
+    public function test_search_filters_projects_by_title_and_maintains_query_string(): void
+    {
+        $this->seed(\Database\Seeders\ProjectSampleSeeder::class);
+
+        $response = $this->get(route('projects.index', ['search' => 'Akademik']));
+        $response->assertStatus(200);
+        $response->assertSee('Sistem Informasi Akademik Kampus');
+        $response->assertDontSee('E-Commerce UMKM Batik Tradisional');
+
+        $emptyResponse = $this->get(route('projects.index', ['search' => 'KeywordTidakDitemukan']));
+        $emptyResponse->assertStatus(200);
+        $emptyResponse->assertSee('Tidak ada project yang sesuai dengan kata kunci "<strong>KeywordTidakDitemukan</strong>".', false);
+        $emptyResponse->assertSee('Reset Pencarian');
+    }
 }

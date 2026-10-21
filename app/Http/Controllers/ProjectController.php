@@ -7,16 +7,24 @@ use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::published()
-            ->latest()
-            ->get();
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [5, 10, 25], true)) {
+            $perPage = 10;
+        }
 
-        return view('projects.index', compact('projects'));
+        $search = $request->input('search');
+
+        $projects = Project::published()
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', '%' . $search . '%');
+            })
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view('projects.index', compact('projects', 'perPage', 'search'));
     }
     /**
      * Show the form for creating a new resource.
