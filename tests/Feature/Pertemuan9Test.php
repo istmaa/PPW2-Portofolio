@@ -156,3 +156,4 @@ class Pertemuan9Test extends TestCase
         $this->get(route('home'))->assertSee('Login');
     }
 }
+

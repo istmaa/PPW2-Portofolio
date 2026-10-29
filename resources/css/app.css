@@ -558,6 +558,11 @@ main {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
 }
 
+.auth-card-container {
+    max-width: 440px;
+    margin: 1.5rem auto 0 auto;
+}
+
 .form-group {
     margin-bottom: 1.25rem;
 }
