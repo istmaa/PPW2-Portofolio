@@ -3,12 +3,21 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ProjectTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $admin = User::factory()->admin()->create();
+        $this->actingAs($admin);
+    }
 
     public function test_projects_index_page_is_successful_and_displays_projects(): void
     {
