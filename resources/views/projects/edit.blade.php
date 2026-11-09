@@ -103,6 +103,18 @@
                 </a>
             </div>
         </form>
+
+        <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+                <span style="font-weight: 600; font-size: 0.92rem; color: var(--color-text);">Gallery Project</span>
+                <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--color-text-muted);">
+                    Project ini memiliki {{ $project->images->count() }} gambar dalam gallery.
+                </p>
+            </div>
+            <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary" style="font-size: 0.85rem;">
+                Buka Detail & Kelola Gallery
+            </a>
+        </div>
     </div>
 
 @endsection
