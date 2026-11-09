@@ -18,12 +18,100 @@
         </div>
     @endif
 
+    @if ($project->thumbnail)
+        <img
+            src="{{ asset('storage/' . $project->thumbnail) }}"
+            alt="{{ $project->title }}"
+            class="project-detail-thumb"
+        >
+    @endif
+
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
             <h2 class="card-title" style="margin: 0;">Deskripsi Project</h2>
             <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
         </div>
         <p class="card-text" style="white-space: pre-line;">{{ $project->description }}</p>
+    </div>
+
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h2 class="card-title" style="margin: 0;">Gallery Project</h2>
+            <span class="tag">{{ $project->images->count() }} Gambar</span>
+        </div>
+
+        @auth
+            @if (Auth::user()->role === 'admin')
+                <div style="margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--color-border);">
+                    <form action="{{ route('projects.gallery.store', $project) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <label for="gallery_images" class="form-label">Upload Gambar Gallery</label>
+                            <input
+                                type="file"
+                                id="gallery_images"
+                                name="images[]"
+                                class="form-control @error('images') is-invalid @enderror @error('images.*') is-invalid @enderror"
+                                accept="image/*"
+                                multiple
+                                required
+                            >
+                            <small class="form-hint">Dapat memilih beberapa file sekaligus (JPG, PNG, WEBP, maksimal 4MB per file, minimal 400x300 px).</small>
+
+                            @error('images')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                            @error('images.*')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Upload ke Gallery
+                        </button>
+                    </form>
+                </div>
+            @endif
+        @endauth
+
+        @if ($project->images->isEmpty())
+            <p class="card-text">Belum ada gambar dalam gallery project ini.</p>
+        @else
+            <div class="gallery-grid">
+                @foreach ($project->images as $img)
+                    <div class="gallery-card">
+                        <a href="{{ asset('storage/' . $img->image) }}" target="_blank">
+                            <img
+                                src="{{ asset('storage/' . $img->image) }}"
+                                alt="{{ $img->caption ?: $project->title }}"
+                                class="gallery-card-img"
+                            >
+                        </a>
+                        <div class="gallery-card-body">
+                            <span class="gallery-card-num">Gambar #{{ $loop->iteration }}</span>
+                            @auth
+                                @if (Auth::user()->role === 'admin')
+                                    <form
+                                        action="{{ route('projects.gallery.destroy', [$project, $img]) }}"
+                                        method="POST"
+                                        onsubmit="return confirm('Hapus gambar ini dari gallery?');"
+                                        style="margin: 0;"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.55rem; font-size: 0.78rem;">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                @endif
+                            @endauth
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     <div class="btn-group">

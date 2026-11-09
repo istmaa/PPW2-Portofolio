@@ -69,6 +69,15 @@
         <div class="card-grid">
             @foreach ($projects as $project)
                 <div class="project-item">
+                    @if ($project->thumbnail)
+                        <a href="{{ route('projects.show', $project) }}" style="display: block;">
+                            <img
+                                src="{{ asset('storage/' . $project->thumbnail) }}"
+                                alt="{{ $project->title }}"
+                                class="project-card-thumb"
+                            >
+                        </a>
+                    @endif
                     <div class="project-item-content">
                         <div class="project-item-header">
                             <span class="tag">#{{ $projects->firstItem() + $loop->index }}</span>

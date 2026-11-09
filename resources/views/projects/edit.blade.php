@@ -10,7 +10,7 @@
     </div>
 
     <div class="form-card">
-        <form action="{{ route('projects.update', $project) }}" method="POST">
+        <form action="{{ route('projects.update', $project) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -43,6 +43,35 @@
                 <small class="form-hint">Minimal 10 karakter</small>
 
                 @error('description')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            @if ($project->thumbnail)
+                <div class="form-group">
+                    <label class="form-label">Thumbnail Saat Ini</label>
+                    <div style="margin-bottom: 0.5rem;">
+                        <img
+                            src="{{ asset('storage/' . $project->thumbnail) }}"
+                            alt="{{ $project->title }}"
+                            style="max-width: 240px; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--color-border); display: block;"
+                        >
+                    </div>
+                </div>
+            @endif
+
+            <div class="form-group">
+                <label for="thumbnail" class="form-label">{{ $project->thumbnail ? 'Ganti Thumbnail' : 'Upload Thumbnail' }}</label>
+                <input
+                    type="file"
+                    id="thumbnail"
+                    name="thumbnail"
+                    class="form-control @error('thumbnail') is-invalid @enderror"
+                    accept="image/*"
+                >
+                <small class="form-hint">Format: JPG, JPEG, PNG, WEBP. Maksimal 2MB, dimensi minimal 400x300 px. Biarkan kosong jika tidak ingin mengubah thumbnail.</small>
+
+                @error('thumbnail')
                     <small class="text-danger">{{ $message }}</small>
                 @enderror
             </div>
