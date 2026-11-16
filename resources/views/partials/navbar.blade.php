@@ -9,7 +9,7 @@
             <a href="{{ route('projects.index') }}" class="nav-link {{ request()->routeIs('projects.*') ? 'active' : '' }}">Projects</a>
             @auth
                 @if (Auth::user()->role === 'admin')
-                    <a href="{{ route('post.projects') }}" class="nav-link {{ request()->routeIs('post.projects') ? 'active' : '' }}">Admin Projects</a>
+                    <a href="{{ route('post.projects') }}" class="nav-link {{ request()->routeIs('post.projects') ? 'active' : '' }}">Manage Projects</a>
                 @endif
                 <a href="{{ route('profile.show') }}" class="nav-link {{ request()->routeIs('profile.*') ? 'active' : '' }}">
                     {{ Auth::user()->name }}

@@ -26,9 +26,11 @@
 
     <div class="projects-toolbar">
         <form action="{{ route('projects.index') }}" method="GET" class="projects-filter-form">
-            <div class="filter-search-group">
+            <div class="filter-group filter-group-search">
+                <label for="search" class="filter-label">Pencarian</label>
                 <input
                     type="text"
+                    id="search"
                     name="search"
                     value="{{ $search }}"
                     placeholder="Cari judul atau deskripsi..."
@@ -36,8 +38,8 @@
                 >
             </div>
 
-            <div class="filter-select-group">
-                <label for="technology" class="filter-label">Technology:</label>
+            <div class="filter-group filter-group-select">
+                <label for="technology" class="filter-label">Technology</label>
                 <select name="technology" id="technology" class="form-control filter-select" onchange="this.form.submit()">
                     <option value="">Semua Technology</option>
                     @foreach ($technologies as $tech)
@@ -48,16 +50,16 @@
                 </select>
             </div>
 
-            <div class="filter-select-group">
-                <label for="sort" class="filter-label">Urutkan:</label>
+            <div class="filter-group filter-group-select">
+                <label for="sort" class="filter-label">Urutkan</label>
                 <select name="sort" id="sort" class="form-control filter-select" onchange="this.form.submit()">
                     <option value="newest" {{ $sort === 'newest' ? 'selected' : '' }}>Terbaru</option>
                     <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>Terlama</option>
                 </select>
             </div>
 
-            <div class="filter-select-group">
-                <label for="per_page" class="filter-label">Tampilkan:</label>
+            <div class="filter-group filter-group-sm">
+                <label for="per_page" class="filter-label">Tampilkan</label>
                 <select name="per_page" id="per_page" class="form-control filter-select" onchange="this.form.submit()">
                     <option value="5" {{ $perPage == 5 ? 'selected' : '' }}>5</option>
                     <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
@@ -74,15 +76,15 @@
         </form>
     </div>
 
-    <div class="results-info-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.9rem; color: var(--color-text-muted);">
+    <div class="results-info-bar">
         <span>
-            <strong style="color: var(--color-text);">{{ $totalResults }}</strong> hasil ditemukan
-            @if ($search || $technology || $sort)
-                <span style="font-size: 0.82rem; opacity: 0.85;">(filter aktif)</span>
+            <strong>{{ $totalResults }}</strong> hasil ditemukan
+            @if ($search || $technology || ($sort && $sort !== 'newest'))
+                <span class="badge-filter-active">filter aktif</span>
             @endif
         </span>
         @if ($search || $technology || ($sort && $sort !== 'newest') || $perPage != 10)
-            <a href="{{ route('projects.index') }}" class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.25rem 0.65rem;">
+            <a href="{{ route('projects.index') }}" class="btn btn-secondary btn-sm">
                 Reset Filter
             </a>
         @endif
@@ -93,7 +95,7 @@
             <svg class="placeholder-icon" style="width: 2.5rem; height: 2.5rem; margin: 0 auto 0.75rem auto; display: block; opacity: 0.45;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
-            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem; color: var(--color-text);">0 hasil ditemukan</h3>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem; color: var(--color-text-main);">0 hasil ditemukan</h3>
             @if ($search)
                 <p class="card-text" style="color: var(--color-text-muted); margin-bottom: 1rem;">
                     Tidak ada project yang sesuai dengan kata kunci "<strong>{{ $search }}</strong>".
@@ -115,7 +117,7 @@
             @foreach ($projects as $project)
                 <div class="project-item">
                     @if ($project->thumbnail)
-                        <a href="{{ route('projects.show', $project) }}" style="display: block;">
+                        <a href="{{ route('projects.show', $project) }}" class="project-card-thumb-link">
                             <img
                                 src="{{ asset('storage/' . $project->thumbnail) }}"
                                 alt="{{ $project->title }}"
@@ -134,20 +136,28 @@
                     @endif
                     <div class="project-item-content">
                         <div class="project-item-header">
-                            <span class="tag">#{{ $projects->firstItem() + $loop->index }}</span>
-                            <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
+                            <span class="tag tag-number">#{{ $projects->firstItem() + $loop->index }}</span>
                             @if ($project->technology)
-                                <span class="tag" style="background-color: #f1f5f9; color: #0f172a; border-color: #cbd5e1;">{{ $project->technology }}</span>
-                            @endif
-                            @if ($project->project_date)
-                                <span class="tag" style="font-size: 0.75rem; color: var(--color-text-muted);">{{ \Carbon\Carbon::parse($project->project_date)->format('d M Y') }}</span>
+                                <span class="tag tech-badge">{{ $project->technology }}</span>
                             @endif
                         </div>
-                        <h2 class="project-item-title">{{ $project->title }}</h2>
+                        <h2 class="project-item-title">
+                            <a href="{{ route('projects.show', $project) }}" class="project-title-link">
+                                {{ $project->title }}
+                            </a>
+                        </h2>
                         <p class="project-item-desc">{{ $project->description }}</p>
+                        @if ($project->project_date)
+                            <div class="project-item-meta">
+                                <svg class="meta-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd" />
+                                </svg>
+                                <span class="project-date">{{ \Carbon\Carbon::parse($project->project_date)->format('d M Y') }}</span>
+                            </div>
+                        @endif
                     </div>
                     <div class="project-item-footer">
-                        <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary">
+                        <a href="{{ route('projects.show', $project) }}" class="btn btn-secondary btn-block">
                             Lihat Detail
                         </a>
                     </div>
