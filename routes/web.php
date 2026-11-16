@@ -24,10 +24,10 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('projects.index');
     })->name('dashboard');
     Route::get('/post/profile-saya', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/post/projects', [ProjectController::class, 'index'])->name('post.projects');
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/post/projects', [ProjectController::class, 'adminIndex'])->name('post.projects');
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
     Route::get('/projects/trash', [ProjectController::class, 'trash'])->name('projects.trash');

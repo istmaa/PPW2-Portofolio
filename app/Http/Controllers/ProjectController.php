@@ -16,16 +16,75 @@ class ProjectController extends Controller
         }
 
         $search = $request->input('search');
+        $technology = $request->input('technology');
+        $sort = $request->input('sort');
+
+        $technologies = Project::published()
+            ->whereNotNull('technology')
+            ->distinct()
+            ->orderBy('technology')
+            ->pluck('technology');
 
         $projects = Project::published()
-            ->when($search, function ($query, $search) {
-                $query->where('title', 'like', '%' . $search . '%');
-            })
+            ->with('images')
+            ->filter([
+                'search' => $search,
+                'technology' => $technology,
+            ])
+            ->sortBy($sort)
+            ->paginate($perPage)
+            ->withQueryString();
+
+        $totalResults = $projects->total();
+
+        return view('projects.index', compact(
+            'projects',
+            'perPage',
+            'search',
+            'technology',
+            'sort',
+            'technologies',
+            'totalResults'
+        ));
+    }
+
+    public function adminIndex(Request $request)
+    {
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [5, 10, 25], true)) {
+            $perPage = 10;
+        }
+
+        $search = $request->input('search');
+        $status = $request->input('status');
+        $technology = $request->input('technology');
+
+        $technologies = Project::whereNotNull('technology')
+            ->distinct()
+            ->orderBy('technology')
+            ->pluck('technology');
+
+        $projects = Project::with('images')
+            ->filter([
+                'search' => $search,
+                'status' => $status,
+                'technology' => $technology,
+            ])
             ->latest()
             ->paginate($perPage)
             ->withQueryString();
 
-        return view('projects.index', compact('projects', 'perPage', 'search'));
+        $totalResults = $projects->total();
+
+        return view('projects.admin', compact(
+            'projects',
+            'perPage',
+            'search',
+            'status',
+            'technology',
+            'technologies',
+            'totalResults'
+        ));
     }
 
     public function create()
@@ -39,6 +98,8 @@ class ProjectController extends Controller
             'title' => 'required|string|min:5',
             'description' => 'required|string|min:10',
             'status' => 'required|in:draft,published',
+            'technology' => 'nullable|string|max:50',
+            'project_date' => 'nullable|date',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048|dimensions:min_width=400,min_height=300',
         ]);
 
@@ -70,6 +131,8 @@ class ProjectController extends Controller
             'title' => 'required|string|min:5',
             'description' => 'required|string|min:10',
             'status' => 'required|in:draft,published',
+            'technology' => 'nullable|string|max:50',
+            'project_date' => 'nullable|date',
             'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048|dimensions:min_width=400,min_height=300',
         ]);
 

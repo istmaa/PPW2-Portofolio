@@ -137,7 +137,10 @@ class ProjectSampleSeeder extends Seeder
             ],
         ];
 
-        foreach ($samples as $sample) {
+        $technologies = ['Laravel', 'React', 'Vue.js', 'Flutter', 'Python', 'Tailwind CSS'];
+        foreach ($samples as $index => $sample) {
+            $sample['technology'] = $sample['technology'] ?? $technologies[$index % count($technologies)];
+            $sample['project_date'] = $sample['project_date'] ?? date('Y-m-d', strtotime("2026-01-10 + " . ($index * 5) . " days"));
             Project::create($sample);
         }
     }

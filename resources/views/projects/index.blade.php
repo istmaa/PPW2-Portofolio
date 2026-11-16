@@ -31,9 +31,29 @@
                     type="text"
                     name="search"
                     value="{{ $search }}"
-                    placeholder="Cari judul project..."
+                    placeholder="Cari judul atau deskripsi..."
                     class="form-control"
                 >
+            </div>
+
+            <div class="filter-select-group">
+                <label for="technology" class="filter-label">Technology:</label>
+                <select name="technology" id="technology" class="form-control filter-select" onchange="this.form.submit()">
+                    <option value="">Semua Technology</option>
+                    @foreach ($technologies as $tech)
+                        <option value="{{ $tech }}" {{ $technology === $tech ? 'selected' : '' }}>
+                            {{ $tech }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="filter-select-group">
+                <label for="sort" class="filter-label">Urutkan:</label>
+                <select name="sort" id="sort" class="form-control filter-select" onchange="this.form.submit()">
+                    <option value="newest" {{ $sort === 'newest' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="oldest" {{ $sort === 'oldest' ? 'selected' : '' }}>Terlama</option>
+                </select>
             </div>
 
             <div class="filter-select-group">
@@ -47,22 +67,47 @@
 
             <div class="filter-actions">
                 <button type="submit" class="btn btn-primary">Cari</button>
-                @if ($search || $perPage != 10)
+                @if ($search || $technology || ($sort && $sort !== 'newest') || $perPage != 10)
                     <a href="{{ route('projects.index') }}" class="btn btn-secondary">Reset</a>
                 @endif
             </div>
         </form>
     </div>
 
+    <div class="results-info-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; font-size: 0.9rem; color: var(--color-text-muted);">
+        <span>
+            <strong style="color: var(--color-text);">{{ $totalResults }}</strong> hasil ditemukan
+            @if ($search || $technology || $sort)
+                <span style="font-size: 0.82rem; opacity: 0.85;">(filter aktif)</span>
+            @endif
+        </span>
+        @if ($search || $technology || ($sort && $sort !== 'newest') || $perPage != 10)
+            <a href="{{ route('projects.index') }}" class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.25rem 0.65rem;">
+                Reset Filter
+            </a>
+        @endif
+    </div>
+
     @if ($projects->isEmpty())
         <div class="card empty-state">
+            <svg class="placeholder-icon" style="width: 2.5rem; height: 2.5rem; margin: 0 auto 0.75rem auto; display: block; opacity: 0.45;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <h3 style="font-size: 1.15rem; margin-bottom: 0.35rem; color: var(--color-text);">0 hasil ditemukan</h3>
             @if ($search)
-                <p class="card-text">Tidak ada project yang sesuai dengan kata kunci "<strong>{{ $search }}</strong>".</p>
-                <div style="margin-top: 1rem;">
+                <p class="card-text" style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                    Tidak ada project yang sesuai dengan kata kunci "<strong>{{ $search }}</strong>".
+                </p>
+                <div>
                     <a href="{{ route('projects.index') }}" class="btn btn-secondary">Reset Pencarian</a>
                 </div>
             @else
-                <p class="card-text">Belum ada project.</p>
+                <p class="card-text" style="color: var(--color-text-muted); margin-bottom: 1rem;">
+                    Tidak ada project yang sesuai dengan filter yang Anda pilih.
+                </p>
+                <div>
+                    <a href="{{ route('projects.index') }}" class="btn btn-primary">Reset Filter</a>
+                </div>
             @endif
         </div>
     @else
@@ -91,6 +136,12 @@
                         <div class="project-item-header">
                             <span class="tag">#{{ $projects->firstItem() + $loop->index }}</span>
                             <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
+                            @if ($project->technology)
+                                <span class="tag" style="background-color: #f1f5f9; color: #0f172a; border-color: #cbd5e1;">{{ $project->technology }}</span>
+                            @endif
+                            @if ($project->project_date)
+                                <span class="tag" style="font-size: 0.75rem; color: var(--color-text-muted);">{{ \Carbon\Carbon::parse($project->project_date)->format('d M Y') }}</span>
+                            @endif
                         </div>
                         <h2 class="project-item-title">{{ $project->title }}</h2>
                         <p class="project-item-desc">{{ $project->description }}</p>

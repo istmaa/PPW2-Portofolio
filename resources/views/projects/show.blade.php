@@ -34,9 +34,17 @@
     @endif
 
     <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
             <h2 class="card-title" style="margin: 0;">Deskripsi Project</h2>
-            <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                @if ($project->technology)
+                    <span class="tag" style="background-color: #f1f5f9; color: #0f172a; border-color: #cbd5e1;">{{ $project->technology }}</span>
+                @endif
+                @if ($project->project_date)
+                    <span class="tag" style="font-size: 0.8rem; color: var(--color-text-muted);">{{ \Carbon\Carbon::parse($project->project_date)->format('d M Y') }}</span>
+                @endif
+                <span class="tag {{ $project->status === 'published' ? 'tag-primary' : '' }}">{{ ucfirst($project->status) }}</span>
+            </div>
         </div>
         <p class="card-text" style="white-space: pre-line;">{{ $project->description }}</p>
     </div>

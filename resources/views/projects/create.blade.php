@@ -49,6 +49,39 @@
             </div>
 
             <div class="form-group">
+                <label for="technology" class="form-label">Technology</label>
+                <input
+                    type="text"
+                    id="technology"
+                    name="technology"
+                    class="form-control @error('technology') is-invalid @enderror"
+                    placeholder="Contoh: Laravel, React, Flutter"
+                    value="{{ old('technology') }}"
+                >
+                <small class="form-hint">Teknologi atau framework utama yang digunakan</small>
+
+                @error('technology')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="project_date" class="form-label">Tanggal Project</label>
+                <input
+                    type="date"
+                    id="project_date"
+                    name="project_date"
+                    class="form-control @error('project_date') is-invalid @enderror"
+                    value="{{ old('project_date') }}"
+                >
+                <small class="form-hint">Tanggal pengerjaan atau penyelesaian project</small>
+
+                @error('project_date')
+                    <small class="text-danger">{{ $message }}</small>
+                @enderror
+            </div>
+
+            <div class="form-group">
                 <label for="thumbnail" class="form-label">Thumbnail Project</label>
                 <input
                     type="file"
