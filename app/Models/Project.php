@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -13,12 +15,34 @@ class Project extends Model
 
     protected $fillable = [
         'title',
+        'slug',
+        'category_id',
         'description',
         'status',
         'thumbnail',
         'technology',
         'project_date',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Project $project) {
+            if (! empty($project->slug)) {
+                return;
+            }
+
+            $baseSlug = Str::slug($project->title) ?: 'project';
+            $slug = $baseSlug;
+            $counter = 2;
+
+            while (static::withTrashed()->where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
+            $project->slug = $slug;
+        });
+    }
 
     protected function casts(): array
     {
@@ -60,6 +84,11 @@ class Project extends Model
         }
 
         return $query->latest();
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function images(): HasMany

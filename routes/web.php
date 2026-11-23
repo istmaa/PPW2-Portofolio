@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ContactAdminController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectGalleryController;
@@ -17,6 +20,11 @@ Route::get('/education', function () {
     return view('education');
 })->name('education');
 
+Route::get('/contact', [ContactController::class, 'create'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:contact')
+    ->name('contact.store');
+
 Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
 
 Route::middleware('auth')->group(function () {
@@ -26,8 +34,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/post/profile-saya', [ProfileController::class, 'show'])->name('profile.show');
 });
 
+Route::prefix('post')
+    ->name('post.')
+    ->middleware(['auth', 'admin'])
+    ->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/projects', [ProjectController::class, 'adminIndex'])->name('projects');
+        Route::get('/contacts', [ContactAdminController::class, 'index'])->name('contacts');
+        Route::get('/contacts/{contact}', [ContactAdminController::class, 'show'])->name('contacts.show');
+    });
+
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/post/projects', [ProjectController::class, 'adminIndex'])->name('post.projects');
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
     Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
     Route::get('/projects/trash', [ProjectController::class, 'trash'])->name('projects.trash');
